@@ -1,0 +1,22 @@
+name: Daily Crypto Bot
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Runs once daily at 12:00 UTC
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - run: pip install -r requirements.txt
+    - run: python "Crossover Strat.py"
+    - run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add *.csv
+        git commit -m "Updated crypto data" || exit 0
+        git push
