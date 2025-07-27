@@ -1,3 +1,6 @@
+# ============================
+# crossover_strat.py (MAIN)
+# ============================
 import asyncio
 import aiohttp
 import pandas as pd
@@ -5,7 +8,6 @@ import numpy as np
 from datetime import datetime, timedelta, timezone
 import os
 
-# Kraken valid pair codes (BASE/QUOTE)
 PAIR_MAP = {
     "BTC/ETH": "XETHXXBT",
     "BTC/XRP": "XXRPXXBT",
@@ -57,10 +59,15 @@ async def fetch_ohlc(pair_code, session):
     since = int((datetime.now(timezone.utc) - timedelta(days=DAYS_BACK)).timestamp())
     url = f'https://api.kraken.com/0/public/OHLC'
     params = {'pair': pair_code, 'interval': INTERVAL, 'since': since}
+
+    print(f"Kraken query: {params}")
     async with session.get(url, params=params) as response:
         data = await response.json()
+        print("Kraken response:", data)
+
         if data['error']:
             raise Exception(f"Kraken API error: {data['error']}")
+
         key = list(data['result'].keys())[0]
         raw = data['result'][key]
         df = pd.DataFrame(raw, columns=['time', 'open', 'high', 'low', 'close', 'vwap', 'volume', 'count'])
@@ -74,12 +81,12 @@ async def run_analysis():
     print(f"\n{'='*50}")
     print(f"Running analysis at {timestamp}")
     print(f"{'='*50}")
-    
+
     async with aiohttp.ClientSession() as session:
         for label, kraken_pair in PAIR_MAP.items():
             try:
                 fresh_df = await fetch_ohlc(kraken_pair, session)
-                fresh_df['close'] = 1.0 / fresh_df['close']  # Invert price to BTC/XXX
+                fresh_df['close'] = 1.0 / fresh_df['close']
 
                 safe_name = label.replace("/", "_")
                 csv_file = f"{safe_name}_15min_ohlc.csv"
@@ -97,6 +104,7 @@ async def run_analysis():
                 pd.DataFrame(result['trades'], columns=['Time', 'Action', 'Price']).to_csv(f"{safe_name}_trades.csv", index=False)
 
                 print(f"\n=== {label} ===")
+                print(f"Dataset size: {len(combined_df)} records")
                 print(f"Total Return: {result['total_return_pct']}%")
                 print(f"Number of Trades: {result['num_trades']}")
                 print(f"Win Rate: {result['win_rate_pct']}%")
