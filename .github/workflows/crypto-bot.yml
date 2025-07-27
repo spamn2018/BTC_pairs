@@ -3,7 +3,7 @@ name: Daily Crypto Bot
 on:
   schedule:
     - cron: '0 12 * * *'  # Runs once daily at 12:00 UTC
-
+  workflow_dispatch:
 jobs:
   run-bot:
     runs-on: ubuntu-latest
