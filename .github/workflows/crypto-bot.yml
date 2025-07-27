@@ -2,14 +2,14 @@ name: Daily Crypto Bot
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # Every day at 12:00 UTC
+    - cron: '0 12 * * *'  # Runs once daily at 12:00 UTC
   workflow_dispatch:
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -18,9 +18,9 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install aiohttp pandas numpy matplotlib nest_asyncio
+        run: pip install aiohttp pandas numpy
 
-      - name: Run script
+      - name: Run crossover strategy
         run: python "Crossover Strat.py"
 
       - name: Commit and push CSVs if created
@@ -32,4 +32,5 @@ jobs:
             git commit -m "Updated crypto data"
             git push
           else
-            echo "No CSV files created"
+            echo " No CSV files created – skipping commit."
+          fi
