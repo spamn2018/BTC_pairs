@@ -15,8 +15,12 @@ jobs:
     - run: pip install aiohttp pandas numpy
     - run: python "Crossover Strat.py"
     - run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add *.csv
-        git commit -m "Updated crypto data" || exit 0
-        git push
+        if ls *.csv 1> /dev/null 2>&1; then
+         git config --local user.email "action@github.com"
+         git config --local user.name "GitHub Action"
+         git add *.csv
+         git commit -m "Updated crypto data"
+         git push
+        else
+        echo "No CSV files created"
+        fi
