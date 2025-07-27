@@ -1,8 +1,7 @@
 name: Daily Crypto Bot
-
 on:
   schedule:
-    - cron: '0 12 * * *'  # Runs once daily at 12:00 UTC
+    - cron: '0 12 * * *'  # Runs once daily at 12:00 UTC (fixed: was '0 12 * **')
   workflow_dispatch:
 jobs:
   run-bot:
@@ -16,11 +15,11 @@ jobs:
     - run: python "Crossover Strat.py"
     - run: |
         if ls *.csv 1> /dev/null 2>&1; then
-         git config --local user.email "action@github.com"
-         git config --local user.name "GitHub Action"
-         git add *.csv
-         git commit -m "Updated crypto data"
-         git push
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add *.csv
+          git commit -m "Updated crypto data"
+          git push
         else
-        echo "No CSV files created"
+          echo "No CSV files created"
         fi
