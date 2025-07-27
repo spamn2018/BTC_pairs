@@ -1,25 +1,35 @@
 name: Daily Crypto Bot
+
 on:
   schedule:
-    - cron: '0 12 * * *'  # Runs once daily at 12:00 UTC (fixed: was '0 12 * **')
+    - cron: '0 12 * * *'  # Every day at 12:00 UTC
   workflow_dispatch:
+
 jobs:
   run-bot:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    - run: pip install aiohttp pandas numpy
-    - run: python "Crossover Strat.py"
-    - run: |
-        if ls *.csv 1> /dev/null 2>&1; then
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add *.csv
-          git commit -m "Updated crypto data"
-          git push
-        else
-          echo "No CSV files created"
-        fi
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install aiohttp pandas numpy matplotlib nest_asyncio
+
+      - name: Run script
+        run: python "Crossover Strat.py"
+
+      - name: Commit and push CSVs if created
+        run: |
+          if ls *.csv 1> /dev/null 2>&1; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add *.csv
+            git commit -m "Updated crypto data"
+            git push
+          else
+            echo "No CSV files created"
