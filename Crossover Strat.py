@@ -14,7 +14,7 @@ PAIR_MAP = {
 }
 
 INTERVAL = 15  # minutes
-DAYS_BACK = 1000
+DAYS_BACK = 7
 FEE_RATE = 0.0025
 
 def moving_average_strategy(df):
