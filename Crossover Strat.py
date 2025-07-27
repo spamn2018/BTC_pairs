@@ -13,7 +13,7 @@ PAIR_MAP = {
     "BTC/SOL": "SOLXBT"
 }
 
-INTERVAL = 1440  # minutes
+INTERVAL = 15  # minutes
 DAYS_BACK = 1000
 FEE_RATE = 0.0025
 
