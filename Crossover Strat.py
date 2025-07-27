@@ -76,6 +76,10 @@ async def run_analysis():
     print(f"Running analysis at {timestamp}")
     print(f"{'='*50}")
     
+    # DEBUG: Print current working directory and files
+    print(f"Current directory: {os.getcwd()}")
+    print(f"Files in directory: {os.listdir('.')}")
+    
     async with aiohttp.ClientSession() as session:
         for label, kraken_pair in PAIR_MAP.items():
             try:
@@ -102,9 +106,16 @@ async def run_analysis():
                 # Run backtest on accumulated data
                 result = moving_average_strategy(combined_df.copy())
 
+                # DEBUG: Print before saving
+                print(f"About to save: {csv_file}")
+                
                 # Save updated dataset
                 combined_df.to_csv(csv_file, index=False)
                 pd.DataFrame(result['trades'], columns=['Time', 'Action', 'Price']).to_csv(f"{safe_name}_trades.csv", index=False)
+
+                # DEBUG: Check if files were created
+                print(f"File exists after saving: {os.path.exists(csv_file)}")
+                print(f"Files in directory after saving: {os.listdir('.')}")
 
                 # Print results
                 print(f"\n=== {label} ===")
